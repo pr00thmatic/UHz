@@ -149,7 +149,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings: {fileID: 11400000, guid: 1c014e3fd2f27c34fae2856c06e0fbdc, type: 2}
-  dash: {fileID: 646816592}
 --- !u!4 &53259352
 Transform:
   m_ObjectHideFlags: 0
@@ -214,6 +213,7 @@ MonoBehaviour:
   positionDrivers:
   - {fileID: 53259350}
   - {fileID: 646816590}
+  current: {fileID: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -576,6 +576,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings: {fileID: 11400000, guid: 9ac1129d8cfce2e4aa813a02fe3abbd9, type: 2}
   motion: {fileID: 53259351}
+  model: {fileID: 2110817724}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

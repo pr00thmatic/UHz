@@ -6,9 +6,11 @@ public class DashSettings : ScriptableObject {
     [SerializeField] private InputActionReference input;
 
     [field: SerializeField] public float DirectionReadGraceTime { get; private set; }
-    [field: SerializeField] public float Speed { get; private set; }
+    [field: SerializeField] public float Distance { get; private set; }
     [field: SerializeField] public float Duration { get; private set; }
     [field: SerializeField] public float Cooldown { get; private set; }
+    [field: SerializeField] public AnimationCurve FinalTransition { get; private set; }
+    [field: SerializeField] public AnimationCurve GraceTransition { get; private set; }
 
     public InputAction Input => input.action;
 }
