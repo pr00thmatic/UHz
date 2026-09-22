@@ -1,10 +1,8 @@
 using UnityEngine;
 
-public class Positioner : MonoBehaviour
-{
+public class Positioner : MonoBehaviour {
     [SerializeField] private GameObject[] positionDrivers;
     private IPositionDriver currentDriver;
-    public GameObject current;
 
     void OnEnable () {
         foreach (GameObject driverGameObject in positionDrivers) {
@@ -29,7 +27,6 @@ public class Positioner : MonoBehaviour
             return;
 
         currentDriver = driver;
-        current = (driver as MonoBehaviour).gameObject;
         transform.position = currentDriver.GetPosition(transform.position);
     }
 }
