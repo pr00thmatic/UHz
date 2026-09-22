@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[CreateAssetMenu(fileName = "DashSettings", menuName = "UHz/Player/DashSettings")]
+[CreateAssetMenu(fileName = "DashSettings", menuName = "UHz/Actions/DashSettings")]
 public class DashSettings : ScriptableObject {
     [SerializeField] private InputActionReference input;
 

@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[CreateAssetMenu(fileName = "PlayerMotionSettings", menuName = "UHz/Player/MotionSettings")]
-public class PlayerMotionSettings : ScriptableObject {
+[CreateAssetMenu(fileName = "MotionSettings", menuName = "UHz/Actions/MotionSettings")]
+public class MotionSettings : ScriptableObject {
     [SerializeField] private InputActionReference motionInput;
 
     [field: SerializeField] public float Speed { get; private set; }

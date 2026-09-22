@@ -1,13 +1,16 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Dash : MonoBehaviour {
+public class DashAction : MonoBehaviour, IPositionDriver {
+    public event System.Action<IPositionDriver> OnPositionChangeRequest;
+
     [SerializeField] private DashSettings settings;
-    [SerializeField] private PlayerMotion motion;
+    [SerializeField] private MoveAction motion;
 
     private float startTimestamp = float.MinValue;
     private Vector3 dashDirection;
 
+    public bool IsLocked => IsDashing;
     public float TimeInDash => Time.time - startTimestamp;
     public bool IsDashing => TimeInDash < settings.Duration;
     public bool IsInCooldown => (startTimestamp + settings.Duration + settings.Cooldown) > Time.time;
@@ -27,8 +30,11 @@ public class Dash : MonoBehaviour {
         if (IsReadingDirection)
             dashDirection = motion.ImmediateNonZeroDirection;
 
-        transform.position += settings.Speed * Time.deltaTime * dashDirection;
+        OnPositionChangeRequest?.Invoke(this);
     }
+
+    public Vector3 GetPosition(Vector3 position)
+        => IsDashing? settings.Speed * Time.deltaTime * dashDirection + position : position;
 
     private void HandleDash(InputAction.CallbackContext context) {
         if (IsInCooldown)
