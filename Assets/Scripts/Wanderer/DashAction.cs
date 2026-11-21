@@ -20,7 +20,7 @@ public class DashAction : MonoBehaviour, IPositionDriver {
     public float TimeInDash => Mathf.Min(Time.time - startTimestamp, endTimestamp - startTimestamp);
     public bool IsDashing => Time.time < endTimestamp;
     public bool IsInCooldown => endCooldown > Time.time;
-    public bool IsReadingDirection => TimeInDash < settings.DirectionReadGraceTime;
+    public bool IsReadingDirection => IsDashing && TimeInDash < settings.DirectionReadGraceTime;
     public Vector3 FinalPosition => dashStart + dashDirection.normalized * settings.Distance;
 
     public AnimationCurve TransitionCurve => IsReadingDirection? settings.GraceTransition : settings.FinalTransition;
