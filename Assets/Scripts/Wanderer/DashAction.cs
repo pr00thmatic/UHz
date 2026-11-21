@@ -9,13 +9,15 @@ public class DashAction : MonoBehaviour, IPositionDriver {
     [SerializeField] private GameObject model;
 
     private float startTimestamp = float.MinValue;
+    private float endTimestamp = float.MinValue;
     private Vector3 dashDirection;
     private Vector3 dashStart;
 
+    public bool WasAborted => endTimestamp < startTimestamp + settings.Duration;
     public bool IsLocked => IsDashing;
-    public float TimeInDash => Time.time - startTimestamp;
-    public bool IsDashing => TimeInDash < settings.Duration;
-    public bool IsInCooldown => (startTimestamp + settings.Duration + settings.Cooldown) > Time.time;
+    public float TimeInDash => Mathf.Max(Time.time - startTimestamp, startTimestamp - endTimestamp);
+    public bool IsDashing => Time.time < endTimestamp;
+    public bool IsInCooldown => endTimestamp + settings.Cooldown > Time.time;
     public bool IsReadingDirection => TimeInDash < settings.DirectionReadGraceTime;
     public Vector3 FinalPosition => dashStart + dashDirection.normalized * settings.Distance;
 
@@ -45,7 +47,7 @@ public class DashAction : MonoBehaviour, IPositionDriver {
     public Vector3 HandleNudgedPosition (Vector3 originalPosition, Vector3 nudgedPosition)
     {
         if (originalPosition != nudgedPosition)
-            StopDashing();
+            ForgiveDash(); // TODO: change back to AbortDash after exploring the wall-bonk Gemini proposed
 
         return nudgedPosition;
     }
@@ -55,9 +57,18 @@ public class DashAction : MonoBehaviour, IPositionDriver {
             return;
 
         startTimestamp = Time.time;
+        endTimestamp = Time.time + settings.Duration;
         dashStart = transform.position;
         dashDirection = motion.ImmediateNonZeroDirection;
     }
 
-    private void StopDashing () => startTimestamp = -1;
+    /// <summary>
+    /// actually resets the dash cooldown after stopping it
+    /// </summary>
+    private void ForgiveDash () => startTimestamp = -1;
+
+    /// <summary>
+    /// stops the dash while respecting the cooldown
+    /// </summary>
+    private void AbortDash () => endTimestamp = Time.time;
 }
