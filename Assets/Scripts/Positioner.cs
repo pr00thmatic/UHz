@@ -1,7 +1,13 @@
 using UnityEngine;
 
+/// <summary>
+/// Many behaviors can contest this object's position.
+/// Positioner helps keep Geneva Convention respected in this contested territory xD
+/// </summary>
 public class Positioner : MonoBehaviour {
     [SerializeField] private GameObject[] positionDrivers;
+    [field: SerializeField] public EnvironmentMotionRestrictions EnvironmentRestrictions { get; private set; }
+
     private IPositionDriver currentDriver;
 
     void OnEnable () {
@@ -27,6 +33,8 @@ public class Positioner : MonoBehaviour {
             return;
 
         currentDriver = driver;
-        transform.position = currentDriver.GetPosition(transform.position);
+        Vector3 originalTargetPosition = currentDriver.GetPosition(transform.position);
+        Vector3 nudgedTargetPosition = EnvironmentRestrictions.NudgedMotion(transform.position, originalTargetPosition);
+        transform.position = currentDriver.HandleNudgedPosition(originalTargetPosition, nudgedTargetPosition);
     }
 }

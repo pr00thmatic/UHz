@@ -19,16 +19,13 @@ public class DashAction : MonoBehaviour, IPositionDriver {
     public bool IsReadingDirection => TimeInDash < settings.DirectionReadGraceTime;
     public Vector3 FinalPosition => dashStart + dashDirection.normalized * settings.Distance;
 
+    public AnimationCurve TransitionCurve => IsReadingDirection? settings.GraceTransition : settings.FinalTransition;
+    public float NormalizedTime => IsReadingDirection? GraceNormalizedDashTime : FinalNormalizedDashTime;
     public float GraceNormalizedDashTime => Mathf.Clamp01(TimeInDash / settings.DirectionReadGraceTime);
     public float FinalNormalizedDashTime => Mathf.Clamp01((TimeInDash - settings.DirectionReadGraceTime) / (settings.Duration - settings.DirectionReadGraceTime));
 
-    void OnEnable () {
-        settings.Input.performed += HandleDash;
-    }
-
-    void OnDisable () {
-        settings.Input.performed -= HandleDash;
-    }
+    void OnEnable () => settings.Input.performed += HandleDash;
+    void OnDisable () => settings.Input.performed -= HandleDash;
 
     void Update () {
         model.SetActive(!IsReadingDirection);
@@ -41,16 +38,19 @@ public class DashAction : MonoBehaviour, IPositionDriver {
         OnPositionChangeRequest?.Invoke(this);
     }
 
-    public Vector3 GetPosition(Vector3 position) {
-        if (!IsDashing)
-            return position;
+    public Vector3 GetPosition (Vector3 position) => !IsDashing? position :
+        Vector3.Lerp(dashStart, FinalPosition, TransitionCurve.Evaluate(NormalizedTime));
 
-        return Vector3.Lerp(dashStart, FinalPosition, IsReadingDirection ? 
-            settings.GraceTransition.Evaluate(GraceNormalizedDashTime) : 
-            settings.FinalTransition.Evaluate(FinalNormalizedDashTime));
+    // TODO: handle animations :v
+    public Vector3 HandleNudgedPosition (Vector3 originalPosition, Vector3 nudgedPosition)
+    {
+        if (originalPosition != nudgedPosition)
+            StopDashing();
+
+        return nudgedPosition;
     }
 
-    private void HandleDash(InputAction.CallbackContext context) {
+    private void HandleDash (InputAction.CallbackContext context) {
         if (IsInCooldown)
             return;
 
@@ -58,4 +58,6 @@ public class DashAction : MonoBehaviour, IPositionDriver {
         dashStart = transform.position;
         dashDirection = motion.ImmediateNonZeroDirection;
     }
+
+    private void StopDashing () => startTimestamp = -1;
 }
