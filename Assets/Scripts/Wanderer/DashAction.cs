@@ -11,6 +11,7 @@ public class DashAction : MonoBehaviour, IPositionDriver {
 
     private float startTimestamp = float.MinValue;
     private float endTimestamp = float.MinValue;
+    private float endCooldown = float.MinValue;
     private Vector3 dashDirection;
     private Vector3 dashStart;
 
@@ -18,7 +19,7 @@ public class DashAction : MonoBehaviour, IPositionDriver {
     public bool IsLocked => IsDashing;
     public float TimeInDash => Mathf.Max(Time.time - startTimestamp, startTimestamp - endTimestamp);
     public bool IsDashing => Time.time < endTimestamp;
-    public bool IsInCooldown => endTimestamp + settings.Cooldown > Time.time;
+    public bool IsInCooldown => endCooldown > Time.time;
     public bool IsReadingDirection => TimeInDash < settings.DirectionReadGraceTime;
     public Vector3 FinalPosition => dashStart + dashDirection.normalized * settings.Distance;
 
@@ -57,6 +58,7 @@ public class DashAction : MonoBehaviour, IPositionDriver {
 
         startTimestamp = Time.time;
         endTimestamp = Time.time + settings.Duration;
+        endCooldown = endTimestamp + settings.Cooldown;
         dashStart = transform.position;
         dashDirection = motion.ImmediateNonZeroDirection;
     }
@@ -64,7 +66,11 @@ public class DashAction : MonoBehaviour, IPositionDriver {
     /// <summary>
     /// actually resets the dash cooldown after stopping it
     /// </summary>
-    private void ForgiveDash () => startTimestamp = -1;
+    private void ForgiveDash ()
+    {
+        AbortDash();
+        endCooldown = Time.time;
+    }
 
     /// <summary>
     /// stops the dash while respecting the cooldown
