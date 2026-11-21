@@ -34,7 +34,10 @@ public class Positioner : MonoBehaviour {
 
         currentDriver = driver;
         Vector3 originalTargetPosition = currentDriver.GetPosition(transform.position);
-        Vector3 nudgedTargetPosition = EnvironmentRestrictions.NudgedMotion(transform.position, originalTargetPosition);
-        transform.position = currentDriver.HandleNudgedPosition(originalTargetPosition, nudgedTargetPosition);
+
+        if (EnvironmentRestrictions.FindMotionNudges(transform.position, originalTargetPosition, out var hit))
+            transform.position = currentDriver.HandleNudgedPosition(originalTargetPosition, hit);
+        else
+            transform.position = originalTargetPosition;
     }
 }

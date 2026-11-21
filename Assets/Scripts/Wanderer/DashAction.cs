@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.AI;
 
 public class DashAction : MonoBehaviour, IPositionDriver {
     public event System.Action<IPositionDriver> OnPositionChangeRequest;
@@ -44,12 +45,10 @@ public class DashAction : MonoBehaviour, IPositionDriver {
         Vector3.Lerp(dashStart, FinalPosition, TransitionCurve.Evaluate(NormalizedTime));
 
     // TODO: handle animations :v
-    public Vector3 HandleNudgedPosition (Vector3 originalPosition, Vector3 nudgedPosition)
+    public Vector3 HandleNudgedPosition (Vector3 originalPosition, NavMeshHit hit)
     {
-        if (originalPosition != nudgedPosition)
-            ForgiveDash(); // TODO: change back to AbortDash after exploring the wall-bonk Gemini proposed
-
-        return nudgedPosition;
+        ForgiveDash(); // TODO: change back to AbortDash after exploring the wall-bonk Gemini proposed
+        return hit.position;
     }
 
     private void HandleDash (InputAction.CallbackContext context) {

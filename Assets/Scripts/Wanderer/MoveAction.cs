@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MoveAction : MonoBehaviour, IPositionDriver {
     public event System.Action<IPositionDriver> OnPositionChangeRequest;
@@ -25,5 +26,5 @@ public class MoveAction : MonoBehaviour, IPositionDriver {
     }
 
     public Vector3 GetPosition (Vector3 position) => position + settings.Speed * Time.deltaTime * inputDirection;
-    public Vector3 HandleNudgedPosition (Vector3 originalPosition, Vector3 nudgedPosition) => nudgedPosition;
+    public Vector3 HandleNudgedPosition (Vector3 originalPosition, NavMeshHit hit) => hit.position;
 }
