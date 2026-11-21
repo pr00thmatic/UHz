@@ -17,7 +17,7 @@ public class DashAction : MonoBehaviour, IPositionDriver {
 
     public bool WasAborted => endTimestamp < startTimestamp + settings.Duration;
     public bool IsLocked => IsDashing;
-    public float TimeInDash => Mathf.Max(Time.time - startTimestamp, startTimestamp - endTimestamp);
+    public float TimeInDash => Mathf.Min(Time.time - startTimestamp, endTimestamp - startTimestamp);
     public bool IsDashing => Time.time < endTimestamp;
     public bool IsInCooldown => endCooldown > Time.time;
     public bool IsReadingDirection => TimeInDash < settings.DirectionReadGraceTime;
