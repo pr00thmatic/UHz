@@ -2,8 +2,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
 
-public class DashAction : MonoBehaviour, IPositionDriver {
+public partial class DashAction : MonoBehaviour, IPositionDriver {
     public event System.Action<IPositionDriver> OnPositionChangeRequest;
+    public event System.Func<Vector3, NavMeshHit, Vector3> OnNudgedPosition;
 
     [SerializeField] private DashSettings settings;
     [SerializeField] private MoveAction motion;
@@ -14,17 +15,20 @@ public class DashAction : MonoBehaviour, IPositionDriver {
     private float endCooldown = float.MinValue;
     private Vector3 dashDirection;
     private Vector3 dashStart;
+    private bool malleableDirection = false;
 
     public bool WasAborted => endTimestamp < startTimestamp + settings.Duration;
     public bool IsLocked => IsDashing;
     public float TimeInDash => Mathf.Min(Time.time - startTimestamp, endTimestamp - startTimestamp);
     public bool IsDashing => Time.time < endTimestamp;
     public bool IsInCooldown => endCooldown > Time.time;
-    public bool IsReadingDirection => IsDashing && TimeInDash < settings.DirectionReadGraceTime;
+    public bool IsBlinking => IsDashing && TimeInDash < settings.DirectionReadGraceTime;
+    public bool IsReadingDirection => malleableDirection && IsBlinking;
     public Vector3 FinalPosition => dashStart + dashDirection.normalized * settings.Distance;
+    public Vector3 DashDirection => dashDirection;
 
-    public AnimationCurve TransitionCurve => IsReadingDirection? settings.GraceTransition : settings.FinalTransition;
-    public float NormalizedTime => IsReadingDirection? GraceNormalizedDashTime : FinalNormalizedDashTime;
+    public AnimationCurve TransitionCurve => IsBlinking? settings.GraceTransition : settings.FinalTransition;
+    public float NormalizedTime => IsBlinking? GraceNormalizedDashTime : FinalNormalizedDashTime;
     public float GraceNormalizedDashTime => Mathf.Clamp01(TimeInDash / settings.DirectionReadGraceTime);
     public float FinalNormalizedDashTime => Mathf.Clamp01((TimeInDash - settings.DirectionReadGraceTime) / (settings.Duration - settings.DirectionReadGraceTime));
 
@@ -47,26 +51,29 @@ public class DashAction : MonoBehaviour, IPositionDriver {
 
     // TODO: handle animations :v
     public Vector3 HandleNudgedPosition (Vector3 originalPosition, NavMeshHit hit)
-    {
-        ForgiveDash(); // TODO: change back to AbortDash after exploring the wall-bonk Gemini proposed
-        return hit.position;
-    }
+        => OnNudgedPosition == null? hit.position : OnNudgedPosition.Invoke(originalPosition, hit);
 
     private void HandleDash (InputAction.CallbackContext context) {
         if (IsInCooldown)
             return;
 
+        Dash(motion.ImmediateNonZeroDirection, malleableDirection: true);
+    }
+
+    public void Dash (Vector3 direction, bool malleableDirection)
+    {
+        this.malleableDirection = malleableDirection;
         startTimestamp = Time.time;
         endTimestamp = Time.time + settings.Duration;
         endCooldown = endTimestamp + settings.Cooldown;
         dashStart = transform.position;
-        dashDirection = motion.ImmediateNonZeroDirection;
+        dashDirection = direction.normalized;
     }
 
     /// <summary>
     /// actually resets the dash cooldown after stopping it
     /// </summary>
-    private void ForgiveDash ()
+    public void ForgiveDash ()
     {
         AbortDash();
         endCooldown = Time.time;
@@ -75,5 +82,5 @@ public class DashAction : MonoBehaviour, IPositionDriver {
     /// <summary>
     /// stops the dash while respecting the cooldown
     /// </summary>
-    private void AbortDash () => endTimestamp = Time.time;
+    public void AbortDash () => endTimestamp = Time.time;
 }
