@@ -17,7 +17,6 @@ public partial class DashWallBounce : MonoBehaviour {
         reflection = manager.DashDirection - 2 * Vector3.Dot(manager.DashDirection, hit.normal) * hit.normal;
 
         manager.ForgiveDash();
-        transform.position = Vector3.zero;
         manager.Dash(reflection);
 
         return hit.position;
