@@ -14,60 +14,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   input: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   <DirectionReadGraceTime>k__BackingField: 0.1
-  <Distance>k__BackingField: 10
+  <Distance>k__BackingField: 15
   <Duration>k__BackingField: 0.2
   <Cooldown>k__BackingField: 0.5
-  <FinalTransition>k__BackingField:
+  <TimeVsMotion>k__BackingField:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.5
-      inSlope: 2
-      outSlope: 2
+      value: 0
+      inSlope: 3.9419587
+      outSlope: 3.9419587
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.1828664
     - serializedVersion: 3
-      time: 0.1528387
-      value: 0.85374177
-      inSlope: 0.41629663
-      outSlope: 0.41629663
+      time: 0.3029624
+      value: 0.8953719
+      inSlope: 0.31471506
+      outSlope: 0.31471506
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.44721115
-      outWeight: 0.10110612
+      inWeight: 0.33333334
+      outWeight: 0.08397457
     - serializedVersion: 3
       time: 1
       value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  <GraceTransition>k__BackingField:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0.5
-      inSlope: 0.5
-      outSlope: 0.5
-      tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0

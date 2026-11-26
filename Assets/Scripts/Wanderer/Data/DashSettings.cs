@@ -9,8 +9,7 @@ public class DashSettings : ScriptableObject {
     [field: SerializeField] public float Distance { get; private set; }
     [field: SerializeField] public float Duration { get; private set; }
     [field: SerializeField] public float Cooldown { get; private set; }
-    [field: SerializeField] public AnimationCurve FinalTransition { get; private set; }
-    [field: SerializeField] public AnimationCurve GraceTransition { get; private set; }
+    [field: SerializeField] public AnimationCurve TimeVsMotion { get; private set; }
 
     public InputAction Input => input.action;
 }
